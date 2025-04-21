@@ -33,8 +33,8 @@
     "negotiator": "^1.0.0",
     "next": "15.0.3",
     "postgres": "^3.4.5",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react": "18",
+    "react-dom": "18"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.9",
