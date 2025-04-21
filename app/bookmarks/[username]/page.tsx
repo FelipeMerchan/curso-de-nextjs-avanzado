@@ -1,5 +1,5 @@
 import { Fragment, Suspense } from "react"
-import Image from "next/legacy/image"
+import Image from "next/image"
 
 import { Heading, Text } from "@chakra-ui/react"
 
@@ -37,7 +37,10 @@ export default async function Author({
               alt={author.name!}
               width="60"
               height="60"
-            />
+              style={{
+                maxWidth: "100%",
+                height: "auto"
+              }} />
           </div>
           <figcaption>
             <Heading size="lg" className="">
@@ -49,9 +52,7 @@ export default async function Author({
           </figcaption>
         </figure>
       </header>
-
       <Text className="mt-2">Patrones de consumo de datos usando promesas</Text>
-
       <Heading size="lg" className="mb-1 mt-14">
         Marcadores
       </Heading>
@@ -59,7 +60,7 @@ export default async function Author({
         {isWhitelisted && <AuthorBookmarksById authorId={author.id} />}
       </Suspense>
     </main>
-  )
+  );
 }
 
 async function AuthorBookmarksById(props: { authorId: number }) {

@@ -7,7 +7,7 @@ import {
   BugAntIcon,
   AdjustmentsVerticalIcon,
 } from "@heroicons/react/24/outline"
-import Image from "next/legacy/image"
+import Image from "next/image"
 
 import { Card } from "../components/card"
 import { Heading, Text } from "@chakra-ui/react"
@@ -22,7 +22,10 @@ export default function Home() {
           className="mx-auto"
           width="35"
           height="35"
-        />
+          style={{
+            maxWidth: "100%",
+            height: "auto"
+          }} />
         <Heading as="h1" size="lg" className="my-2 max-w-80 mx-auto">
           Curso de Platzi Avanzado de Next.js
         </Heading>
@@ -91,5 +94,5 @@ export default function Home() {
         </ul>
       </section>
     </main>
-  )
+  );
 }
