@@ -7,7 +7,7 @@ import {
   BugAntIcon,
   AdjustmentsVerticalIcon,
 } from "@heroicons/react/24/outline"
-import Image from "next/image"
+import Image from "next/legacy/image"
 
 import { Card } from "../components/card"
 import { Heading, Text } from "@chakra-ui/react"

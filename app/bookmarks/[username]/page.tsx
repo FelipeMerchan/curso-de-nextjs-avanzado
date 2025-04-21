@@ -1,5 +1,5 @@
 import { Fragment, Suspense } from "react"
-import Image from "next/image"
+import Image from "next/legacy/image"
 
 import { Heading, Text } from "@chakra-ui/react"
 
