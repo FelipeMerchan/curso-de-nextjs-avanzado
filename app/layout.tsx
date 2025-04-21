@@ -9,8 +9,9 @@ import { Providers } from "./providers"
 
 export const metadata: Metadata = {
   title: "Curso de Next.js - Platzi 🦑",
+
   description:
-    "Proyecto de estudio para aplicación de conocimientos de Next.js 15",
+    "Proyecto de estudio para aplicación de conocimientos de Next.js 15"
 }
 
 const font = PT_Serif({
