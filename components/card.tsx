@@ -11,7 +11,7 @@ type CardProps = {
 
 export function Card({ to, term, desc, icon }: CardProps) {
   return (
-    <Link href={to}>
+    <Link href={to} legacyBehavior>
       <div className="border-2 border-black hover:bg-purple-200 hover:-translate-y-1 transition-all rounded p-4 md:p-6 min-h-48 flex flex-col justify-between">
         <header className="flex justify-between">
           {icon}
@@ -25,5 +25,5 @@ export function Card({ to, term, desc, icon }: CardProps) {
         </div>
       </div>
     </Link>
-  )
+  );
 }

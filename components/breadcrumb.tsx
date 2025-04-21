@@ -22,7 +22,7 @@ export function Breadcrumb({ className, children }: PropsWithChildren<Props>) {
       <Link
         href="/"
         className="inline-flex items-center text-gray-400 hover:text-gray-500"
-      >
+        legacyBehavior>
         <span>
           <HomeIcon className="w-5 h-5 mr-2" />
         </span>
@@ -34,11 +34,11 @@ export function Breadcrumb({ className, children }: PropsWithChildren<Props>) {
           <Link
             href={"/" + paths.slice(0, index + 1).join("/")}
             className="inline-flex items-center text-gray-400 hover:text-gray-500 capitalize"
-          >
+            legacyBehavior>
             <span>{path}</span>
           </Link>
         </Fragment>
       ))}
     </div>
-  )
+  );
 }
