@@ -34,3 +34,21 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Configuración de base de datos
+
+2. Correr:
+
+```bash
+docker compose up -d
+```
+
+```bash
+docker run --rm -p 8081:8081 sosedoff/pgweb `
+  --host=host.docker.internal `
+  --port=5432 `
+  --user=admin `
+  --pass=admin123 `
+  --db=next15db `
+  --ssl=disable
+```
