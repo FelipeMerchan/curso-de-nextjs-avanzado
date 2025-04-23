@@ -24,7 +24,17 @@ import {
   getMonthlyTotal,
 } from "./actions"
 
+/* Los react server components nos ayudan a proteger el código de los navegadores.
+Siempre queremos proteger nuestros secretos, proteger todo lo que pasa en el servidor
+y enviar tan poco código como sea posible al cliente para que únicamente
+ejecuten lo que deben hacer.
+En vez de utilizar fetch podríamos conectarnos directamente a nuestra base de datos
+sin ninguna base de datos y next se encarga de separar el código entre cliente y servidor
+y enviar únicamente el resultado a nuestros usuarios.
+*/
+
 export default async function ExpenseTracker() {
+  /* Nos conectamos directamente a nuestra base de datos: */
   const expenses = await getExpenses()
   const total = await getMonthlyTotal()
 
@@ -38,6 +48,9 @@ export default async function ExpenseTracker() {
       </Heading>
 
       <Form
+        /* Desde nuestro FE estamos usando addExpense de forma directa, nos conectamos directamente
+        a la base de datos, estamos hablando directamente sql dentro de addExpense y lo
+        estamos enviando a la página */
         action={addExpense}
         className="p-6 my-12 border-2 space-y-4 max-w-lg mx-auto"
       >
