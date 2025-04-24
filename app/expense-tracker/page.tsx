@@ -34,6 +34,8 @@ y enviar únicamente el resultado a nuestros usuarios.
 */
 
 export default async function ExpenseTracker() {
+  /* Segunda forma de consumir datos desde el servidor, en la cual nos conectamos
+  directamente con la base de datos desde el servidor sin pasar por una api: */
   /* Nos conectamos directamente a nuestra base de datos: */
   const expenses = await getExpenses()
   const total = await getMonthlyTotal()
