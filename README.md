@@ -37,6 +37,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 # Configuración de base de datos
 
+1. Abrir la app docker desktop.
+
 2. Correr:
 
 ```bash
@@ -52,3 +54,13 @@ docker run --rm -p 8081:8081 sosedoff/pgweb `
   --db=next15db `
   --ssl=disable
 ```
+
+```bash
+npm run bookmarks:db:generate
+```
+
+```bash
+npm run bookmarks:db:push
+```
+
+3. Abrir la url http://localhost:8081/ para ver la base de datos.
