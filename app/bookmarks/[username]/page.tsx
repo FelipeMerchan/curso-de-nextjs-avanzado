@@ -1,11 +1,31 @@
-import { Fragment, Suspense } from "react"
+import { Suspense } from "react"
 import Image from "next/image"
 
 import { Heading, Text } from "@chakra-ui/react"
 
 import { Bookmark } from "@/components/bookmark"
+import Loading from "./loading"
 import { orm } from "../db"
 import { isInWhitelist } from "../utils/whitelist"
+
+/* React server actions y react server components tienen una gran vetaja y es que nos
+permite cargar desde el server toda la información que necesitamos en nuestra página
+web, sin embargo, en la vida real la cantidad de datos que tenemos que manejar puede ser
+siempre un reto en nuestras aplicaciones. Es por esto que entre más datos nosotros necesitemos
+cargar desde el servidor, más lento y más va a impactar la respuesta en nuestros usuarios finales
+en el cliente.
+Es por esto que se hablará de Suspense en esta clase. Suspense es un feature de react que anunciaron
+que iba a tener un gran impacto en cómo funcionaba todo, al principio no entendían los desarrolladores,
+pero cuando entraron los react server components se dieron cuenta que era una parte fundamental
+en la forma en que podíamos controlar y darle pistas a react y a next.js de lo que iba a suceder para
+que nos ayudara poniendo spinners de carga y que ayudaran esperando a que llegara la información y que
+nos dieran toda esta flexibilidad para hacer mejores páginas web.
+
+Con el componente Suspense podemos implementar streaming.
+
+Sin streaming el navegador tiene que esperar a que todo el servidor resuelva su respuesta para poder obtener
+la respuesta en el navegador y renderizar toda la información.
+*/
 
 /* En esta clase se analizarán diferentes enfoques para mejorar la forma
 en cómo se consultan y cómo se estructuran los llamados a las bases de datos
@@ -124,7 +144,27 @@ export default async function Author({
       <Heading size="lg" className="mb-1 mt-14">
         Marcadores
       </Heading>
-      <Suspense fallback={<Fragment />}>
+      {/* Mientras carga vamos a colocar un loading, este loading lo veremos en la primera respuesta
+      que el servidor envia al navegador, por lo cual podremos renderizar los datos que ya tenemos
+      listos y los que pueden tardarse tendrán un loading mientras los datos están listos. Sin suspense
+      la respuesta al cliente se dará hasta que el servidor termine todas las peticiones así que el navegador
+      no pintará nada hasta que esto termine. Con suspense les podemos mostrar un loading mientras se terminan
+      de ejecutar las peticiones y así el servidor le enviará al navegador lo que ya tenga listo para renderizarlo
+      y cuando termine lo que está con suspense se lo enviará al navegador para que termine de mostrar toda la
+      información. Lograr esto antes involucraba usar un useEffect para que desde del cliente se hiciera la petición
+      y se mostrara un loading con algún useState, con Suspense esto lo hace ahora React y Next.js de forma
+      más óptima.
+      En algunos casos el servidor sí nos va a dar toda la información y no usará el loading, esto es dependiendo
+      de qué tan rápido el servidor pueda resolver todas las peticiones lo va a renderizar y va a terminar el trabajo en el
+      servidor o en el cliente. Este proceso se le conoce como streaming y es el que gracias a Suspense podemos
+      lograr y darle mayor agilidad en el renderizado en el cliente. Gracias a Next.js y la gran integración que tiene
+      con las nuevas versiones de React hay otra forma en que podemos usar Suspense a nivel de páginas usando el archico loading.tsx.
+      */}
+      {/* You can wrap any part of your application with a Suspense boundary.
+      React will display your loading fallback until all the code and data needed by the children has been loaded. */}
+      <Suspense fallback={<Loading />}>
+        {/* Como Next.js está muy integrado con React podemos usar nuestro componente loading.tsx
+      en nuestro Suspense: <Suspense fallback={<Loading />}> */}
         {/* Dependiendo de la validación vamos a renderizar
       la información de AuthorBookmarksById (el cual hace la segunda petición) */}
         {isWhitelisted && <AuthorBookmarksById authorId={author.id} />}
