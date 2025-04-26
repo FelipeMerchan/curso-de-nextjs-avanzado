@@ -13,8 +13,10 @@ export default async function I18nPage({
 }: {
   params: Promise<{ lang: string }>
 }) {
-  const { lang } = await params
+  const { lang } = await params // params nos da acceso a el parámetro dinámico [lang], es / en
   const { t, f, d } = await getTranslations(lang)
+  /* El método t, en base al language que le enviemos a getTranslation nos
+  va a dar la traducción correcta de cada campo. */
 
   return (
     <main className="">
