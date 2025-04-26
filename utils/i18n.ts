@@ -11,6 +11,11 @@ export const defaultLocale = "es"
 export function getLocale(headers: { "accept-language": string }): string {
   const languages = new Negotiator({ headers }).languages()
 
+  /* languages es una array de los locales que acepta el navegador,
+  por ejemplo tendremos [en-US, en]. */
+  /* match va a indicar, en base a los lenguajes del navegador, los
+  lenguajes que tenemos soportados y el lenguaje por defecto, qué locale
+  cumple con la intersección de estos 3 conjuntos: */
   return match(languages, supportedLocales, defaultLocale)
 }
 

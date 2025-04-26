@@ -8,7 +8,11 @@ import {
   COOKIE_NAME as SESSION_COOKIE_NAME,
 } from "@/utils/auth"
 
+/* El middleware va a interceder entre el cliente y el backend.
+Es perfecto para interceptar la request del usuario y según esto tomar deciciones
+como por ejemplo hacer redirecciones. */
 export async function middleware(request: NextRequest) {
+  /* nextUrl es la ruta de a dónde va nuestro usuario */
   const { pathname } = request.nextUrl
 
   // Auth
@@ -45,11 +49,19 @@ export async function middleware(request: NextRequest) {
 
   // 3. Si no hay local, agregar el local a la URL
   //    e.j.: /i18n -> /i18n/es
+  /* Podemos detectar la locale que le deberíamos dar a un usuario
+  por medio de un header llamado Accept-Language. Este lo configuran
+  los navegadores de los usuarios en base al sistema operativo del usuario
+  y los idiomas que el usuarios tenga agregados en el navegador, es decir,
+  en los settigns del navegador donde se escogen los idiomas. */
   const locale = getLocale({
     "accept-language": request.headers.get("Accept-Language") || "",
   })
+  /* Si el locale no viene en la ruta usamos el locale que obtenemos
+  en getLocale para agregarlo a nuestra ruta: */
   request.nextUrl.pathname = `${pathname}/${locale}`
 
+  /* Hacemos una redirección a la nueva url: */
   return NextResponse.redirect(request.nextUrl)
 }
 
