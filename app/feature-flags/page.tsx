@@ -2,17 +2,79 @@ import { Heading, Text } from "@chakra-ui/react"
 
 import { getClient } from "./lib"
 
+/*
+* LaunchDarkly
+Existe desde hace mucho tiempo. Particualrmente no tiene tan buen soporte para next.js, pero
+no significa que no soporte next.js. LaunchDarkly ofrece integraciones para clientes (aplicaciones
+que funcionan únicamente en el cliente) y aplicaciones que funcionan en el servidor.
+Nuestra aplicación es una aplicación que funciona con node.js, por lo cual el SDF del lado del servidor que
+debemos usar es @launchdarkly/node-server-sdk y del lado del cliente es launchdarkly-react-client-sdk.
+*/
+
 // @see https://docs.launchdarkly.com/home/observability/contexts
+/* En el contexto pueden ir los valores de geolocalización,
+permisos y roels de los usuarios para saber si se habiltia o no el valor
+de la flag. */
 const context = {
   kind: "app-page",
   key: "feature-flags",
 }
 
-export const dynamic = "force-dynamic" // 'auto' | 'force-dynamic' | 'error' | 'force-static'
-// export const revalidate = 10 // false, Infinity, number
+/*
+* Nota
+Nuestra página en react server components es estática, lo que significa que en el momento en que hacemos
+npm run build, next.js está trayendo la información de LaunchDarkly y la está poniendo de forma estática
+y únicamente está generando 1 html que siempre se lo da al usuario, lo que implica que por defecto Next.js
+no va a hacer ningún trabajo de servidor si volvemos a entrar a la página por lo cual no obtiene
+información nueva de LaunchDarkly y por lo tanto no podemos ver cambios en nuestras feature flags porque
+se quedó con el valor que obtuvo en el npm run build.
+
+Next.js nos ofrece formas de modificar este cache y de modificar las revalidaciones de cada página
+para que nos funcione LaunchDarkly como esperamos.
+
+Tenemos 2 formas en que podemos controlar esto:
+1. exportando una variable llamada dynamic con el valor "force-dynamic". dynamic controla la forma
+en que el servidor va a funcionar y va a tratar esta información. Con el valor "force-dynamic"
+lo que hará es que cada vez que haya una petición a la página, es decir, cada vez que entre el usuario a
+esta ruta, va a ejecutar toda la página (resovlerá todo lo asíncrono) y va a retornar el HTML.
+
+2. Utilizar revalidate, con revalidate podemos especificarle a Next.js cada cuánto queremos
+que se revalide la información de nuestras páginas. Esto es lo que se conoce en Next.js como Dynamic
+Site Generation, es decir, que de forma incremental estamos cambiando nuestro sitio de acuerdo a los parámetros
+que le demos. Revalidate tiene varios parámetros, uno de ellos es un número que indica en segundos cada cuánto
+se debe procesar está información, por ejemplo:
+export const revalidate = 10 <- serían 10 segundos
+Si queremos ver este comportamiento no lo podrémos ver con npm run dev, porque esto solo funciona en producción.
+Debemos hacer un build y un npm run start.
+Con un revalidate de 10 segundos el comportamiento que tendrémos será que Next.js es que la página la primera vez que hicimos
+build llamará todas las peticiones que necesita, entre ellas la de launchdarkly, y construirá la página. Luego
+de los 10 segundos, y de que llegue una visita a la página, Next.js irá de nueva a LaunchDarkly, traerá la
+nueva información sin hacer re-build y únicamente después de los 10 segundos trae lo nuevo que se encuentra
+en nuestra API y revalida las páginas a las que les hemos pasado esta directiva.
+
+* Cached data can be revalidated in two ways:
+
+- Time-based revalidation: Automatically revalidate data after a certain amount of time has passed. This is
+useful for data that changes infrequently and freshness is not as critical.
+
+- On-demand revalidation: Manually revalidate data based on an event (e.g. form submission). On-demand
+revalidation can use a tag-based or path-based approach to revalidate groups of data at once. This
+is useful when you want to ensure the latest data is shown as soon as possible (e.g. when content
+from your headless CMS is updated):
+'use server'
+
+import { revalidateTag } from 'next/cache'
+
+export default async function action() {
+  revalidateTag('collection')
+}
+*/
+// export const dynamic = "force-dynamic" // 'auto' | 'force-dynamic' | 'error' | 'force-static'
+export const revalidate = 10 // false, Infinity, number
 
 export default async function FeatureFlags() {
   const client = await getClient()
+  /* "feature-new-color" es el id de la feature flag en LaunchDarkly: */
   const variation = await client.variation("feature-new-color", context, false)
 
   const backgroundColor = variation ? "bg-purple-200" : "bg-green-200"
