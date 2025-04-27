@@ -36,6 +36,9 @@ por los cuales nuestra app puede monitorear los errores que puedan suceder.
 
 Sentry (https://sentry.io/welcome/) es un servicio muy popular. Funciona tanto para aplicaciones que están en el cliente como
 las que están en el servidor.
+
+Servicios similares a Sentry, como Datadog y Rollbar, pueden ser útiles dependiendo de las necesidades del proyecto.
+La clave está en utilizar herramientas que se integren profundamente con tu stack tecnológico, como el archivo de instrumentación en Next.js.
 */
 
 export default function GlobalError({
