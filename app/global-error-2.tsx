@@ -27,12 +27,24 @@ import { useEffect } from "react"
   experiencia le estaremos dando a nuestros usuarios.
 */
 
+/*
+* Nota
+En aplicaciones que ya están en produción y que tienen muchas interaccioens con usuarios
+siempre es recomendado estar pendientes de la aplicación y analizar los errores.
+Existen servicios de observabilidad que nos permiten estar atentos de los errores. Son los sistemas
+por los cuales nuestra app puede monitorear los errores que puedan suceder.
+
+Sentry (https://sentry.io/welcome/) es un servicio muy popular. Funciona tanto para aplicaciones que están en el cliente como
+las que están en el servidor.
+*/
+
 export default function GlobalError({
   error,
 }: {
   error: Error & { digest?: string }
 }) {
   useEffect(() => {
+    /* Tomamos el error y lo reportamos al servicio de análisis de errores: */
     Sentry.captureException(error)
   }, [error])
 
