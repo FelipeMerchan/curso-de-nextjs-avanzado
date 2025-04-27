@@ -16,11 +16,15 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Auth
+  /* La autenticación es el mecanismo que tenemos para saber si un usuario
+  que ingresa a nuestra aplicación tiene los permisos o no para acceder a ciertas páginas.
+  Con el middleware de Next.js podemos evaluar las rutas y verificar si el usuario tiene permiso
+  o no para acceder al contenido que intenta dirigirse. */
   // -------------
 
   // 1. Ignore todo lo que no sea de nuestra ruta /auth
   if (pathname.startsWith("/auth") && pathname !== "/auth/login") {
-    const allCookies = await cookies()
+    const allCookies = await cookies() // <- las cookies ahora son asíncronas en la nueva versión de Next.js 15
 
     // 2. Verificar si hay una cookie de sesión válida
     const hasSession = await isSessionValid(
@@ -33,6 +37,13 @@ export async function middleware(request: NextRequest) {
     }
 
     // 4. Si no, redireccionar a la página de inicio de sesión
+    /* Podríamos enviar directamente NextResponse.redirect("/auth/login"), sin embargo,
+    si el usuario tiene parámetros en la url como por ejemplo, /auth/login?name=Felipe
+    los perderíamos, es por ello que podemos crear una URL con la clase URL que recibe
+    el pathname en su primer atributo (usará este pathname como la base) y la completamos
+    con lo que sea que tengamos en nuestro request.nextUrl pasandoselo en el segundo atributo.
+    Así URL tomará el pathname como base y todos los search params que tengamos en la url (request.nextUrl)
+    se van a heredar en la instancia de URL: */
     return NextResponse.redirect(new URL("/auth/login", request.nextUrl))
   }
 
