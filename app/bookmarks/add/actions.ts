@@ -11,6 +11,12 @@ export async function addBookmark(prevState: unknown, data: FormData) {
 
   const value = await orm.insert(bookmarks).values({ title, url }).returning()
 
+  /*
+  * 1. Cómo integrar errores correctamente con Server Actions.
+  Next.js y React recomiendan que la forma en cómo debemos manejar errores
+  es evitar el uso de try y catch, debido a cómo funciona Next.js internamente, y que
+  usemos if y else en su lugar:
+  */
   if (value.length <= 0) {
     return { error: "Fallo en agregar el marcador en la base de datos." }
   }

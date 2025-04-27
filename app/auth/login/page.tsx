@@ -23,10 +23,10 @@ export default function I18nPage() {
   1. Donde simplemente pasamos el server action (en este caso es login) al
   formulario: <form action={login}>.
   2. A través de useActionState para manejar los errores de la aplicación.
-  useActionState va a recibir cuál es la acción que queremos realizar (en este caso es login) y nos
-  va a devolver en un array lo siguiente: state (state es el objeto que deberíamos retornar
-  dentro de nuestro método/action llamado login) y la acción (dispatch) que le debemos pasar
-  a nuestro formulario: <form action={action}>
+  useActionState va a recibir cuál es la acción que queremos realizar (en este caso es login y tiene
+  que ser un server action) y nos va a devolver en un array lo siguiente: state (state es el objeto
+  que deberíamos retornar dentro de nuestro método/action llamado login) y la acción (dispatch) que
+  le debemos pasar a nuestro formulario: <form action={action}>
   useActionState is a Hook that allows you to update state based on the result of a form action.
   */
   const [state, action] = useActionState(login, { error: "" })
