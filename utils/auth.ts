@@ -4,6 +4,9 @@ import { cookies } from "next/headers"
 
 import { SignJWT, jwtVerify } from "jose"
 
+/* Para que funcione el método decrypt y isSessionValid debemos tener esta variable
+de entorno:
+SESSION_SECRET=2037745262d46eddec63bd2381d1904359fc6b5736da1dcc50799d721a817a6f */
 const secretKey = process.env.SESSION_SECRET
 
 if (!secretKey && process.env.NODE_ENV !== "development") {
@@ -43,6 +46,7 @@ export const COOKIE_NAME = "__session__"
 
 export async function createSession(userId: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7d
+  /* session es el valor de la cookie que vamos a crear */
   const session = await encrypt({ userId }, "7d")
   const _cookies = await cookies()
 

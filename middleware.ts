@@ -8,6 +8,12 @@ import {
   COOKIE_NAME as SESSION_COOKIE_NAME,
 } from "@/utils/auth"
 
+/*
+Las cookies tienen una grandiferencia entre localStorage y sessionStorega y es que las cookies
+las podemos compartir entre el navegador y el servidor, es por ello que en esta clase
+usamos las cookies para guardar la información de la sesión.
+*/
+
 /* El middleware va a interceder entre el cliente y el backend.
 Es perfecto para interceptar la request del usuario y según esto tomar deciciones
 como por ejemplo hacer redirecciones. */
