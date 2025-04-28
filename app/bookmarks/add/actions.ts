@@ -2,6 +2,7 @@
 
 import { bookmarks } from "../schema"
 import { orm } from "../db"
+import { revalidateTag } from "next/cache"
 
 export async function addBookmark(prevState: unknown, data: FormData) {
   const title = data.get("title") as string
@@ -10,6 +11,12 @@ export async function addBookmark(prevState: unknown, data: FormData) {
   console.log("Adding bookmark:", { title, url })
 
   const value = await orm.insert(bookmarks).values({ title, url }).returning()
+
+  /* Le indicamos a Next.js que la información que tenga grabada dentro del tag
+  bookmarks sea invalidada, es decir, Next.js eliminará los datos que tuviera en el cache para bookmarks, de forma tal
+  que cuando se vuelva a realizar la petición a "http://localhost:3000/bookmarks/api"
+  no haya ningún cache y vuelva a realizar la petición y la almacene en el cache. */
+  revalidateTag("bookmarks")
 
   /*
   * 1. Cómo integrar errores correctamente con Server Actions.

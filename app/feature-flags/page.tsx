@@ -1,4 +1,12 @@
 import { Heading, Text } from "@chakra-ui/react"
+/* Para usar la directris use cache ahora tendríamos a
+unstable_cacheTag (porque es experimental hasta el momento) y
+unstable_cacheLife.
+
+unstable_cacheTag: para revalidar etiquetas
+unstable_cacheLife: indica la revalidación que podemos hacer
+*/
+import { unstable_cacheLife as cacheLife } from "next/cache"
 
 import { getClient } from "./lib"
 
@@ -69,10 +77,53 @@ export default async function action() {
   revalidateTag('collection')
 }
 */
-// export const dynamic = "force-dynamic" // 'auto' | 'force-dynamic' | 'error' | 'force-static'
-export const revalidate = 10 // false, Infinity, number
+
+/*
+  * Gestión de caché en Next.js con dynamic y revalidate
+  En la versión 15 la forma en cómo funciona el cache ha cambiado.
+  Ahora Next.js está dejando de tomar tantas decisiones de cache y se las está dando
+  a los usuarios.
+
+  * dynamic
+  export const dynamic = "force-dynamic" hace que la página siempre vaya al servidor para validar
+  la información para que siempre sea fresca. Es como server site generation.
+
+  export const dynamic = "force-static", Next.js por defecto va a prerenderizar todas las páginas.
+  force-static le indica a Next.js que, sin importar que Next.js piense que la página no es estática, hazla
+  estática y cuando hagamos build haz un prerender de esta página. Es como static site generation.
+
+  export const dynamic = "auto", por defecto dynamic viene en auto así que si no especificaramos un valor en dynamic
+  Next.js haría su mejor intento por prerenderizar la página y dar el mejor resutlado.
+
+  export const dynamic = "error", Next.js intentaría hacer un renderizado estático, pero en caso de que haya un error
+  el proceso de build terminaría con un error y no sería exitoso.
+
+  * revalidate
+  Es una palbar reservada de Next.js. Con revalidate podemos espeficifar un periodo de tiempo en segundos y cuando se cumpla
+  ese periodo nuestro servidor va a revalidar la inforamción asíncrona que tengamos. Durante ese periodo de tiempo
+  la información se va a considerar fresca así que si hay un request a nuestra página se va a utilizar el mismo html. Luego
+  de que el periodo haya pasado si hay un nuevo request a la página se va a ir al servidor y servicios externos
+  para traer la información con el fin de devovlerla al usuario y vuelve y la almacena.
+
+  export const revalidate = Infinity y export const revalidate = 0 hacen exactamente lo mismo y le dicen a Next.js
+  que jamas revalide la información porque la información nunca va a cambiar, es lo mismo que static site generation o usar
+  export const dynamic = "force-static".
+
+  export const revalidate = false, ignora por completo esta medida.
+*/
+export const dynamic = "force-dynamic" // 'auto' | 'force-dynamic' | 'error' | 'force-static'
+/* export const revalidate = 10 */ // false, Infinity, number
 
 export default async function FeatureFlags() {
+  /*
+  * "use cache"
+  Apartir de Next.js 15 llegó la directiva "use cache", permite controlar absolutamente todo lo que hemos visto
+  de cache. Hasta el día de hoy esta funcionalidad está en fase de experimentación asi que por defecto no viene en la instalación
+  de Next.js 15, pero se espera que esta nueva funcionalidad llegue antes de la versión 16. */
+  /* "use cache" */
+  /* cacheLife es lo mismo que usar revalidate, pero ahora podemos
+  especificar el tiempo de forma más humana (minutes, weeks, etc): */
+  /* cacheLife("minutes") */
   const client = await getClient()
   /* "feature-new-color" es el id de la feature flag en LaunchDarkly: */
   const variation = await client.variation("feature-new-color", context, false)

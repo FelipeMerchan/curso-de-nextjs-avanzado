@@ -1,10 +1,12 @@
-"use client"
+"use server"
 
 import { Heading, Text } from "@chakra-ui/react"
 
 import { Bookmark } from "@/components/bookmark"
 import { useQuery } from "@tanstack/react-query"
-import { BookmarkType } from "./schema"
+import { BookmarkType, bookmarks } from "./schema"
+import { useEffect, useState } from "react"
+import { unstable_cacheTag as cacheTag } from "next/cache"
 
 /* Los React server components son una herramienta muy poderosa que tenemos
 que utilizar porque en performance y seo son excelentes, desde el primer
@@ -17,7 +19,7 @@ para el usuario de forma instantanea. */
 
 /* Para volver el componente un componente del servidor debemos
 volver el componente asíncrono (export default async function Bookmarks()): */
-export default function Bookmarks() {
+export default async function Bookmarks() {
   /* Si trabajamos desde un server component las rutas relativas no existen
   por lo cual no podemos usar await fetch("/bookmarks/api"), en su lugar,
   debemos usar rutas absolutas como http://localhost:3000/bookmarks/api */
@@ -71,7 +73,7 @@ export default function Bookmarks() {
   Con una librería muy buena como lo es React Query.
   Si queremos hacer una app robusta debemos utilizar librerías
   como react query para manejar todo lo asíncrono. */
-  const { data: bookmarks, status } = useQuery({
+  /* const { data: bookmarks, status } = useQuery({
     queryKey: ["bookmarks"], // identificador para caché
     queryFn: async () => {
       return fetch("/bookmarks/api")
@@ -87,7 +89,65 @@ export default function Bookmarks() {
     },
   })
 
-  console.log({ status })
+  console.log({ status }) */
+
+  //const [bookmarks, setBookmarks] = useState<BookmarkType[]>([])
+
+  //useEffect(() => {
+  /*
+    * Gestión de caché en Next.js con fetch
+    Podemos crear cache a través de fetch. Next.js ha hecho a fetch disponible en todos los navegadores y
+    además lo ha extendido para agregarle funcionalidades.
+    */
+  //fetch("/bookmarks/api", {
+  /* cache:
+        la configuración cache dentro de fetch tiene 2 funcionalidades dependiendo
+        del lugar en que se use (servidor o navegador). Como estamos en un componente de cliente las opciones de cache
+        ya existen dentro del protocolo de http y la web api, es decir, que tenemos las mismas
+        que tenemos las mismas que hemos tenido siempre en el navegador.
+        El cache que estamos tocando aquí es el cache del navegador.
+
+        Si el fetch fuera en el servidor en un react server component las opciones de cache afectarán
+        lo que suceda entre el servidor y el servicio externo al cual nos comuniquemos.
+      */
+  //cache: "force-cache",
+  //next: { tags: ["bookmarks"] },
+  //})
+  //.then((response) => response.json() as Promise<{ data: BookmarkType[] }>)
+  //.then(({ data }) => setBookmarks(data))
+  //}, [])
+  const { data: bookmarks } = await fetch(
+    "http://localhost:3000/bookmarks/api",
+    {
+      /* cache: "no-cache", <- indica a Next.js que no utilice cache y siempre que se haga la petición */
+      /* cache: "force-cache", <- indica a Next.js que guarde en el cache del servidor y siempre dame esa respuesta */
+      /* Next.js le agregó una nueva propiedad llamada next que es exclusiva de Next.js */
+      next: {
+        /* El revalidate funciona exactamente igual que como funcionaría en una página,
+      permite indicarle cada cuánto tiempo revalidar la respuesta */
+        /* revalidate: 10, */
+        /* tags, son IDs que podemos asignar a un request en particular para identificarlo posteriormente.
+      son útiles para invalidar la cache en otro momento y lugar de la aplicación usando revalidateTag.
+      los tags son como los query keys de React Query. Permiten identificar el cache para que nosotros de forma
+      manual podamos invaldiar según consideremos sea necesario. */
+        tags: ["bookmarks"],
+      },
+    },
+  ).then((response) => response.json())
+  /* En futuras versiones de next.js 15 el fetch cambiará debido a que
+  la implementación usando la propiedad next no gustó a la comunidad, ahora
+  se hará de la siguiente forma:
+  export default async function Bookmarks() {
+    "use cache"
+    cacheTag('bookmarks')
+    const { data: bookmarks } = await fetch("http://localhost:3000/bookmarks/api")
+    .then((response) => response.json())
+    Así le indicamos a Next.js que vamos a usar cache ("use cache") y vamos a guardar ese
+    cache a través del identificador bookmarks (cacheTag('bookmarks')).
+    La forma de usar revalidateTag será exactamente igual. Usamos
+    revalidateTag("bookmarks") donde lo consideremos necesario.
+  }
+  */
 
   return (
     <main className="mt-12">
