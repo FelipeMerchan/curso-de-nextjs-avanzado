@@ -29,6 +29,28 @@ export async function getExpenses() {
   return result
 }
 
+/*
+* Seguridad en Server Actions y Componentes React
+Debemos tener precaución con la forma en que usamos los server actions.
+Los server actions podrían crearse dentro del cuerpo de un componente de React, pero
+esto no es seguro porque normalmente en los server actions accedemos a secretos
+y si estamos escribiendo los server actions en los componentes estos secretos
+quedarían en el componente y ese código se ejecutará en el navegador así que podríamos
+terminar enviando sin querer secretos a nuestro cliente.
+
+Next.js encripta el envió de información entre el cliente y servidor en el server action.
+
+*Recomendación
+Debemos mantener separado el código de forma correcta, lo que quiere decir que el server action
+nunca debemos escribirlo dentro del componente y siempre debemos crearlos en el archivo actions.ts,
+así Next.js se va a encargar de forma más explicita de revalidarlo.
+Además, también podemos separar aún más el código como por ejemplo, la conexión a la base de datos la podemos tener
+desde otro archivo db.ts y al cliente le enviamos el resultado del server action (por ejemplo, el resultado de addExpense)
+sin crear ningún closure en nuestro código.
+
+Si utilizamos Next.js de forma correcta, separamos nuestro código, indicamos qué es de servidor, qué es de cliente y qué
+es server only podríamos mitigar muchos de los ataques conocidos que existen en la web.
+ */
 // Add a new expense
 export async function addExpense(data: FormData) {
   /* Como es un action y es desde el servidor todo se hace desde
